@@ -22,6 +22,10 @@ __SQL scripts__ are provided for each question and each table individually for e
 __PDF files__ contain answers for the questions, one is in Czech and the other in English.
 
 
+## How to contact me
+
+- First and Last name: Premysl Pleva
+- Discord: premeq
 
 
 
