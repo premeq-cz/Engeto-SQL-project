@@ -3,7 +3,7 @@
  */
 
 SELECT *
-FROM t_premysl_pleva_project_SQL_primary pp
+FROM t_premysl_pleva_project_SQL_primary_final pp
 WHERE LENGTH(code) != 1;
 
 
@@ -16,9 +16,9 @@ SELECT
 	ROUND((value / LAG(value) OVER (PARTITION BY code ORDER BY year) - 1) * 100, 2) AS percentual_difference, 
 	year
 FROM 
-	t_premysl_pleva_project_SQL_primary pp
+	t_premysl_pleva_project_SQL_primary_final pp
 WHERE 
-	LENGTH(code) != 1
+	LENGTH(code) != 1;
 
 /*
  * Step 2: Utilize previous query to find out average percentual increase in price for the whole period
@@ -30,17 +30,17 @@ WITH perc_diff AS(
 		ROUND((value / LAG(value) OVER (PARTITION BY code ORDER BY year) - 1) * 100, 2) AS percentual_difference, 
 		year
 	FROM 
-		t_premysl_pleva_project_SQL_primary pp
+		t_premysl_pleva_project_SQL_primary_final pp
 	WHERE 
 		LENGTH(code) != 1
 )
 SELECT 
 	name,
-	ROUND(AVG(percentual_difference), 2) AS avg_difference
+	ROUND(AVG(percentual_difference), 2) AS avg_perc_diff
 FROM
 	perc_diff
 GROUP BY
 	name
 ORDER BY
-	avg_difference;
+	avg_perc_diff;
 	

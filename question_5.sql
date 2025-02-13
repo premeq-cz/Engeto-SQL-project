@@ -42,7 +42,8 @@ WHERE
  * Step 3: Identify years where GDP had significant increase, i.e. higher then/equal to 5%
  */
 SELECT 
-	year, perc_change_GDP 
+	year,
+	perc_change_GDP 
 FROM 
 	t_premysl_pleva_perc_change_food_salary_GDP
 WHERE 
@@ -52,8 +53,8 @@ WHERE
  * Step 4a: Average food and salay change in significant years (GDP-wise)
  */
 SELECT 
-	ROUND(AVG(perc_change_food), 2) AS avg_perc_change_food_significant_GDP,
-	ROUND(AVG(perc_change_salary), 2) AS avg_perc_change_salary_significant_GDP 
+	ROUND(AVG(avg_perc_change_food), 2) AS avg_perc_change_food_significant_GDP,
+	ROUND(AVG(avg_perc_change_salary), 2) AS avg_perc_change_salary_significant_GDP 
 FROM 
 	t_premysl_pleva_perc_change_food_salary_GDP pp
 WHERE year IN 
@@ -64,8 +65,8 @@ WHERE year IN
  * Step 4b: Average food and salay change in non-significant years (GDP-wise)
  */
 SELECT 
-	ROUND(AVG(perc_change_food), 2) AS avg_perc_change_food_non_significant_GDP,
-	ROUND(AVG(perc_change_salary), 2) AS avg_perc_change_salary_non_significant_GDP 
+	ROUND(AVG(avg_perc_change_food), 2) AS avg_perc_change_food_non_significant_GDP,
+	ROUND(AVG(avg_perc_change_salary), 2) AS avg_perc_change_salary_non_significant_GDP 
 FROM 
 	t_premysl_pleva_perc_change_food_salary_GDP pp
 WHERE year NOT IN 
@@ -76,8 +77,8 @@ WHERE year NOT IN
  * Step 5a: Now comparing average percentual change in years after a significant years for GDP
  */
 SELECT 
-	ROUND(AVG(gdp2.perc_change_food), 2) AS avg_perc_change_food_after_sig_GDP,
-	ROUND(AVG(gdp2.perc_change_salary), 2) AS avg_perc_change_salary_after_sig_GDP 
+	ROUND(AVG(gdp2.avg_perc_change_food), 2) AS avg_perc_change_food_after_sig_GDP,
+	ROUND(AVG(gdp2.avg_perc_change_salary), 2) AS avg_perc_change_salary_after_sig_GDP 
 FROM
 	t_premysl_pleva_perc_change_food_salary_GDP gdp1 
 JOIN
@@ -90,8 +91,8 @@ WHERE gdp1.perc_change_GDP >= 5;
  * Step 5b: Now comparing average percentual change in years after a non-significant year for GDP
  */
 SELECT 
-	ROUND(AVG(gdp2.perc_change_food), 2) AS avg_perc_change_food_after_non_sig_GDP,
-	ROUND(AVG(gdp2.perc_change_salary), 2) AS avg_perc_change_salary_after_non_sig_GDP 
+	ROUND(AVG(gdp2.avg_perc_change_food), 2) AS avg_perc_change_food_after_non_sig_GDP,
+	ROUND(AVG(gdp2.avg_perc_change_salary), 2) AS avg_perc_change_salary_after_non_sig_GDP 
 FROM
 	t_premysl_pleva_perc_change_food_salary_GDP gdp1 
 JOIN

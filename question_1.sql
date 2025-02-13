@@ -10,7 +10,7 @@ SELECT
 	*,
 	ROUND(((value / LAG(value) OVER (PARTITION BY name, code ORDER BY year)) - 1) * 100, 2) AS percent_change
 FROM
-	t_premysl_pleva_project_SQL_primary 
+	t_premysl_pleva_project_SQL_primary _final
 WHERE
 	LENGTH(code) = 1
 ORDER BY
@@ -28,7 +28,7 @@ WITH avg_percent_change AS(
 		*,
 		ROUND(((value / LAG(value) OVER (PARTITION BY name, code ORDER BY year)) - 1) * 100, 2) AS percent_change
 	FROM
-		t_premysl_pleva_project_SQL_primary 
+		t_premysl_pleva_project_SQL_primary_final 
 	WHERE
 		LENGTH(code) = 1
 	ORDER BY
@@ -43,46 +43,50 @@ GROUP BY
 	name;
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------
+/*
+ * Average year to year percentual increase across all industries
+ */
+WITH avg_percent_change AS(
+	SELECT 
+		*,
+		ROUND(((value / LAG(value) OVER (PARTITION BY name, code ORDER BY year)) - 1) * 100, 2) AS percent_change
+	FROM
+		t_premysl_pleva_project_SQL_primary_final 
+	WHERE
+		LENGTH(code) = 1
+	ORDER BY
+		code, year
+)
+SELECT AVG(percent_change)
+FROM avg_percent_change apc;
+
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /*
- * This is just an attempt at normalizing the data and calculating the slope of a line representing the trend of each industry (least square method)
+ * Average year to year percentual increase in each industry,
+ * with assigned "power" as -1 for weaker industries, 1 for strong industries, and 0 fo others
  */
-
-WITH stats AS (
-    SELECT
-    	name, code,
-        AVG(year) AS avg_year,
-        STDDEV(year) AS stddev_year,
-        AVG(value) AS avg_value,
-        STDDEV(value) AS stddev_value
-    FROM
-        t_premysl_pleva_project_SQL_primary
-    GROUP BY
-        name, code
-),
-normalized_data AS (
-    SELECT
-    	pp.name, pp.code,
-        (year - stats.avg_year) / stats.stddev_year AS norm_year,
-        (value - stats.avg_value) / stats.stddev_value AS norm_value
-    FROM
-        t_premysl_pleva_project_SQL_primary pp, stats
-    GROUP BY
-        name, code
-),
-slope_calc AS (
-    SELECT
-    	name, code,
-        SUM(norm_year * norm_value) / SUM(norm_year * norm_year) AS slope
-    FROM
-        normalized_data
-    GROUP BY
-        name, code
+WITH avg_percent_change AS(
+	SELECT 
+		*,
+		ROUND(((value / LAG(value) OVER (PARTITION BY name, code ORDER BY year)) - 1) * 100, 2) AS percent_change
+	FROM
+		t_premysl_pleva_project_SQL_primary_final 
+	WHERE
+		LENGTH(code) = 1
+	ORDER BY
+		code, year
 )
 SELECT
-    code, name, slope
-FROM
-    slope_calc
+	name,
+	ROUND(AVG(percent_change), 2) AS avg_percent_change,
+	CASE
+		WHEN ROUND(AVG(percent_change), 2) < 3.1 THEN '-1'
+		WHEN ROUND(AVG(percent_change), 2) > 4 THEN '1'
+		ELSE '0'
+	END AS power
+FROM avg_percent_change apc
+GROUP BY
+	name
 ORDER BY
-	code;
+	power, avg_percent_change;

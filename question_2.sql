@@ -17,9 +17,9 @@ SELECT
 	ROUND(pp2006.value / 16.12, 2) AS kgs_of_bread_2006,
 	ROUND(pp2018.value / 24.24, 2) AS kgs_of_bread_2018
 FROM
-	t_premysl_pleva_project_SQL_primary pp2006
+	t_premysl_pleva_project_SQL_primary_final pp2006
 JOIN
-	t_premysl_pleva_project_SQL_primary pp2018
+	t_premysl_pleva_project_SQL_primary_final pp2018
 ON
 	pp2006.name = pp2018.name
 WHERE 
@@ -28,13 +28,52 @@ WHERE
 	AND pp2006.year = 2006
 	AND pp2018.year = 2018;
 
+/*
+ * Step 2: Calculate average quantity of milk and bread that could be purchased for average salary in the years 2006 and 2018
+ */
+SELECT 
+	AVG(wage_2006) AS avg_wage_2006,
+	AVG(wage_2018) AS avg_wage_2018,
+	AVG(litres_of_milk_2006) AS avg_milk_2006,
+	AVG(litres_of_milk_2018) AS avg_milk_2018,
+	AVG(kgs_of_bread_2006) AS avg_bread_2006,
+	AVG(kgs_of_bread_2018) AS avg_bread_2018 
+FROM milk_bread_prep
+;
+
 
 /*
- * Step 2: calculate percentual change between 2006 and 2018 of purchasing power of milk and bread
+ * Calculate average percentual increase of wages across all industries and
+ * calculating percentual increase of purchasing power of milk and bread between 2006 and 2018
+ */
+WITH avg_perc_milk_bread AS (
+SELECT 
+	AVG(wage_2006) AS avg_wage_2006,
+	AVG(wage_2018) AS avg_wage_2018,
+	AVG(litres_of_milk_2006) AS avg_milk_2006,
+	AVG(litres_of_milk_2018) AS avg_milk_2018,
+	AVG(kgs_of_bread_2006) AS avg_bread_2006,
+	AVG(kgs_of_bread_2018) AS avg_bread_2018 
+FROM milk_bread_prep
+)
+SELECT
+	ROUND(((avg_wage_2018 / avg_wage_2006) - 1) * 100, 2) AS avg_wage_increase_perc, 
+	ROUND(((avg_milk_2018 / avg_milk_2006) - 1) * 100, 2) AS avg_milk_increase_perc,
+	ROUND(((avg_bread_2018 / avg_bread_2006) - 1) * 100, 2) AS avg_bread_increase_perc
+FROM
+	avg_perc_milk_bread;
+
+
+/*
+ * Step 3: calculate percentual change between 2006 and 2018 of purchasing power of milk and bread in each industry
  */
 
 SELECT
 	name,
 	ROUND(((litres_of_milk_2018 / litres_of_milk_2006) - 1) * 100, 2) AS change_in_milk,
 	ROUND(((kgs_of_bread_2018 / kgs_of_bread_2006) -1) * 100, 2) AS change_in_bread 
-FROM milk_bread_prep;
+FROM
+	milk_bread_prep
+ORDER BY
+	change_in_milk DESC,
+	change_in_bread;

@@ -1,3 +1,4 @@
+CREATE OR REPLACE TABLE t_premysl_pleva_project_SQL_secondary_final AS
 SELECT 
 	e.`year`,
 	c.country,
@@ -11,3 +12,7 @@ WHERE
 ORDER BY 
 	e.year, e.GDP 
 ;
+
+
+SELECT *
+FROM t_premysl_pleva_project_SQL_secondary_final tpppssf ;

@@ -58,7 +58,7 @@ FROM v_premysl_cz_payroll;
  * Sjednocení dvou view do finální tabulky pro projekt
  */
 
-CREATE TABLE t_premysl_pleva_project_SQL_primary AS (
+CREATE OR REPLACE TABLE t_premysl_pleva_project_SQL_primary_final AS (
 	SELECT
 		*
 	FROM
