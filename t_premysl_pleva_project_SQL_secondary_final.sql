@@ -1,3 +1,11 @@
+
+/*
+ * Secondary table: showing European countries and their GDP and GINI in the years spanning 2006 to 2018
+ */
+
+/*
+ * Joining together 'economies' and 'countries', because with 'countries' I can easily filter Europe
+ */
 CREATE OR REPLACE TABLE t_premysl_pleva_project_SQL_secondary_final AS
 SELECT 
 	e.`year`,

@@ -25,7 +25,7 @@ FROM v_premysl_cz_price vpcp ;
  * VIEW payrollu
  */
 
-CREATE VIEW v_premysl_cz_payroll AS (
+CREATE OR REPLACE VIEW v_premysl_cz_payroll AS (
 	SELECT
 		cpib.name, cpib.code, ROUND(AVG(cp.value)) AS value,
 		cp.payroll_year AS year
@@ -75,9 +75,9 @@ CREATE OR REPLACE TABLE t_premysl_pleva_project_SQL_primary_final AS (
 
 
 /*
- * Filtrování mezd a potravin pomocí LENGTH(code) = 1 
+ * Příklad filtrování mezd a potravin pomocí LENGTH(code) = 1 
  */
 
 SELECT *
-FROM t_premysl_pleva_project_SQL_primary 
-WHERE LENGTH(code) != 1 AND code = 118101;
+FROM t_premysl_pleva_project_SQL_primary_final 
+WHERE LENGTH(code) != 1;
