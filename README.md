@@ -2,7 +2,9 @@
 
 The goal of this project is to answer 5 questions related to data set provided by Engeto Academy.
 The available data is on food prices and wages.
+
 The task was to create two tables, one for data on prices and wages in a certain pariod, the other for European countries with GDP and GINI coefficient.
+
 The purpose of this project is to demonstrate knowledge of _joining_ two or more tables, usage of _agregate functions_ and utilizing basic _Common Table Expressions_.
 
 The 5 questions to answer are:
